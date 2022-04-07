@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <title>Cadastro Produto</title>
+
+</head>
+
+<body onload="loadCategoria()">
+  <div class="dropdown">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+      Ações
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="consulta" href="consulta.html">consulta</a></li>
+    </ul>
+</div>
+
+<div>
+
+    <div class="container mt-3" >
+        <h2>Cadastro de produto</h2>
+        <form action="#">
+          <div class="mb-3 mt-3">
+            <label for="descricao">descricao: </label>
+            <input type="text" class="form-control" id="descricao" placeholder="digite a descricao" name="descricao">
+          </div>
+          <div class="mb-3">
+            <label for="preco">preco:</label>
+            <input type="text" class="form-control" id="preco" placeholder="digite o preco" name="preco">
+          </div>
+          <div class="mb-3">
+            <label for="estoque">estoque:</label>
+            <input type="text" class="form-control" id="estoque" placeholder="digite o estoque" name="estoque">
+          </div>
+          <div>
+            <label for="selcategoria" class="form-label">Selecione a categoria:</label>
+            <select class="form-select" id="categorias" name="selcategoria"></select>
+          </div>
+          <div>
+            <label for="selfornecedor" class="form-label">Selecione o fornecedor:</label>
+            <select class="form-select" id="fornecedores" name="selfornecedor"></select>
+          </div>
+          <br>
+
+          <button type="submit" class="btn btn-primary" onclick="salvar()">Enviar</button>
+          <button type="reset" class="btn btn-danger">Cancelar</button>
+
+       
+        </form>
+
+     </div>
+
+</div>
+           
+    <script>
+        
+        function loadCategoria() {
+            fetch("http://localhost:3000/categoria")
+                .then(x => x.text())
+                .then(cat => {
+                    
+                    var ret = display(cat)
+                    console.log(ret);
+                    document.getElementById("categorias").innerHTML = ret;
+                 })
+
+            fetch("http://localhost:3000/fornecedores")
+                .then(x => x.text())
+                .then(cat => {
+                    
+                    var ret = display(cat)
+                    document.getElementById("fornecedores").innerHTML = ret;
+                })
+        }
+
+        function display(cat) {
+            let lista = JSON.parse(cat)
+            var opt = ""
+            for (let ob in lista) {
+                opt += "<option>" + lista[ob].nome + "</option>"
+            }
+            return opt;
+        }
+      
+        function salvar(){
+
+            var produto = { 
+                descricao: document.getElementById("descricao").value,
+                preco: document.getElementById("preco").value,
+                estoque: document.getElementById("estoque").value,
+                categoria: document.getElementById("categorias").value,
+                fornecedor: document.getElementById("fornecedores").value
+            }
+
+            console.log(produto);
+
+
+            fetch("http://localhost:3000/produto",{
+                method: "POST",
+                body: JSON.stringify(produto),
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            })
+
+                .then(x => x.json())
+                .then(x => console.log(x))
+
+        }
+
+    </script>
+</body>
+
+</html>
